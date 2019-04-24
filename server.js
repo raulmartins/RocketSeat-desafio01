@@ -17,11 +17,9 @@ app.get('/', (req, res) => {
 })
 
 const middllewareCheck = (req, res, next) => {
-  console.log(req.body)
-  return next()
+  const { age } = req.query
+  return age ? next() : res.redirect('/')
 }
-
-app.use(middllewareCheck)
 
 app.post('/check', (req, res) => {
   const { age } = req.body
@@ -30,11 +28,11 @@ app.post('/check', (req, res) => {
     : res.redirect(`/minor?age=${age}`)
 })
 
-app.get('/major', (req, res) => {
+app.get('/major', middllewareCheck, (req, res) => {
   res.send(`Você é maior de idade e possui ${req.query.age} anos`)
 })
 
-app.get('/minor', (req, res) => {
+app.get('/minor', middllewareCheck, (req, res) => {
   res.send(`Você é menor de idade e possui ${req.query.age} anos`)
 })
 
